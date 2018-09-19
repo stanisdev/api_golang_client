@@ -2,20 +2,52 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Notifications from '@/components/Notifications'
 import Login from '@/components/Login'
+import CreateNotification from '@/components/CreateNotification'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
-    {
-      path: '/',
-      name: 'Notifications',
-      component: Notifications
-    },
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: Login,
+      meta: {
+        guest: true
+      }
+    },
+    {
+      path: '/notifications',
+      name: 'Notifications',
+      component: Notifications,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/notifications/create',
+      name: 'CreateNotification',
+      component: CreateNotification,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  const hasToken = typeof localStorage.getItem('id_token') === 'string'
+  if (to.path !== '/login' && to.meta instanceof Object && to.meta.requiresAuth && !hasToken) {
+    return next({
+      path: '/login',
+      params: { nextUrl: to.fullPath }
+    })
+  } else if (hasToken && to.path === '/login') {
+    return next({
+      path: '/notifications'
+    })
+  }
+  next()
+})
+
+export default router

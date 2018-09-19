@@ -12,14 +12,15 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="submitForm" :loading="formSending">Login</el-button>
+        <el-button type="primary" @click="submitForm(ruleForm.username, ruleForm.pass)" :loading="formSending">Login</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
+import ApiService from '@/common/api.service'
+let errors = {}
 
 export default {
   name: 'Login',
@@ -27,6 +28,8 @@ export default {
     const validatePass = (rule, value, callback) => {
       if (!value) {
         callback(new Error('Please input the password'))
+      } else if (errors instanceof Object && typeof errors.pass === 'string') {
+        callback(new Error(errors.pass))
       } else {
         callback()
       }
@@ -34,6 +37,8 @@ export default {
     const validateUsername = (role, value, callback) => {
       if (!value) {
         callback(new Error('Please input the username'))
+      } else if (errors instanceof Object && typeof errors.username === 'string') {
+        callback(new Error(errors.username))
       } else {
         callback()
       }
@@ -55,17 +60,26 @@ export default {
     }
   },
   methods: {
-    submitForm () {
+    submitForm (username, pass) {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           this.formSending = true
-          Vue.axios
-            .get('https://yesno.wtf/api')
-            .then((res) => {
-              console.log(res)
+          ApiService.post
+            .call(this, '/user/login', { username, pass })
+            .then((data) => {
+              if (!data.ok) { // Show errors
+                errors = data.errors
+                return this.$refs['ruleForm'].validate(() => {
+                  errors = {}
+                })
+              }
+              localStorage.setItem('id_token', data.payload.id_token)
+              this.$router.push({ name: 'Notifications' })
+            })
+            .catch(Symbol)
+            .finally(() => {
               this.formSending = false
             })
-            .catch(console.log)
         } else {
           return false
         }

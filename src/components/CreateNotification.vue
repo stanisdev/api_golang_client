@@ -1,7 +1,7 @@
 <template>
   <div>
     <menu-navigation></menu-navigation>
-    <span>Navigation</span>
+    <span>Create Notification</span>
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import MenuNavigation from '@/components/MenuNavigation.vue'
 
 export default {
-  name: 'Notifications',
+  name: 'CreateNotification',
   components: {
     MenuNavigation
   },
