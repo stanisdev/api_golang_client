@@ -1,16 +1,18 @@
 <template>
-  <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-    <el-menu-item index="1-notifications">Notifications</el-menu-item>
-    <el-submenu index="2">
-      <template slot="title">Workspace</template>
-      <el-menu-item index="2-create-notification">Create notification</el-menu-item>
-    </el-submenu>
-    <el-submenu index="3">
-      <template slot="title">Settings</template>
-      <el-menu-item index="3-change-password">Change password</el-menu-item>
-      <el-menu-item index="3-logout">Logout</el-menu-item>
-    </el-submenu>
-  </el-menu>
+  <div class="top-nav-menu">
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+      <el-menu-item index="1-notifications">Notifications</el-menu-item>
+      <el-submenu index="2">
+        <template slot="title">Workspace</template>
+        <el-menu-item index="2-create-notification">Create notification</el-menu-item>
+      </el-submenu>
+      <el-submenu v-bind:style="{ 'float': 'right' }" index="3">
+        <template slot="title">Settings</template>
+        <el-menu-item index="3-change-password">Change password</el-menu-item>
+        <el-menu-item index="3-logout">Logout</el-menu-item>
+      </el-submenu>
+    </el-menu>
+  </div>
 </template>
 
 <script>
@@ -29,9 +31,13 @@ const urls = {
 export default {
   name: 'MenuNavigation',
   data () {
-    const url = window.location.href.split('#')[1];
+    let url = window.location.href.split('#')[1];
+    url = urls[url]
+    if (!url) {
+      url = '1-notifications'
+    }
     return {
-      activeIndex: urls[url]
+      activeIndex: url
     }
   },
   methods: {
@@ -50,4 +56,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .top-nav-menu {
+    margin-bottom: 37px;
+  }
 </style>

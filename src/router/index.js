@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Notifications from '@/components/Notifications'
 import Login from '@/components/Login'
 import CreateNotification from '@/components/CreateNotification'
+import NotificationView from '@/components/NotificationView'
 
 Vue.use(Router)
 
@@ -28,6 +29,14 @@ const router = new Router({
       path: '/notifications/create',
       name: 'CreateNotification',
       component: CreateNotification,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/notifications/edit/:id',
+      name: 'NotificationView',
+      component: NotificationView,
       meta: {
         requiresAuth: true
       }

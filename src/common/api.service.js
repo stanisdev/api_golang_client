@@ -5,11 +5,21 @@ const POST_REQUEST_ERROR = 'Unknown error during data transfer'
 const SERVER_URL = 'http://localhost:7000'
 
 const ApiService = {
+  setAuth () {
+    Vue.axios.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('id_token')
+    return this
+  },
   get (slug = '') {
     return new Promise((resolve, reject) => {
       Vue.axios
         .get(SERVER_URL + slug)
-        .then(resolve)
+        .then((response) => {
+          const {data, status} = response
+          if (status !== 200 || !(data instanceof Object) || (!data.ok && !(data.errors instanceof Object))) {
+            throw new Error('Wrong GET query')
+          }
+          resolve(data)
+        })
         .catch(() => {
           this.$message.error(GET_REQUEST_ERROR)
           reject(new Error(GET_REQUEST_ERROR))
@@ -23,7 +33,7 @@ const ApiService = {
         .then((response) => {
           const {data, status} = response
           if (status !== 200 || !(data instanceof Object) || (!data.ok && !(data.errors instanceof Object))) {
-            throw new Error('Wrong post query')
+            throw new Error('Wrong POST query')
           }
           resolve(data)
         })
