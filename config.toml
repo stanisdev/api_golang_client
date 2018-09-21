@@ -1,0 +1,9 @@
+[environment]
+port = 5000
+
+[database]
+host = "localhost"
+username = "root"
+password = "root"
+dbname = "affdb"
+port = 3305
