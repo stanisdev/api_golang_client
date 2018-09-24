@@ -1,16 +1,38 @@
 package controllers
 
-import "github.com/gin-gonic/gin"
+import (
+	"app/models"
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+)
+
+type Env struct {
+	db *gorm.DB
+	DBMethods *models.DbMethods
+}
 
 func Start() {
 	router := gin.Default()
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+
+	router.NoRoute(func(c *gin.Context) {
+		c.JSON(404, gin.H{
+			"ok": false,
+			"message": "Page not found",
+		})
+	})
+	env := &Env{
+		db: models.GetConnection(), 
+		DBMethods: &models.DbMethods{},
+	}
 	user := router.Group("/user")
 	{
-		user.GET("/login", UserLogin)
+		user.POST("/login", env.UserLogin)
 	}
 	notification := router.Group("/notification")
 	{
-		notification.GET("/", NotificationList)
+		notification.GET("/", env.NotificationList)
 	}
 	router.Run()
 }
