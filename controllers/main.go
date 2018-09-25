@@ -36,6 +36,8 @@ func Start() {
 	notification := router.Group("/notification")
 	{
 		notification.GET("/", env.NotificationList)
+		notification.POST("/create", env.NotificationCreate)
+		notification.GET("/remove/:id", env.NotificationRemove)
 	}
 	router.Run(":" + viper.GetString("environment.port"))
 }

@@ -4,6 +4,7 @@ import(
 	"app/services"
 	"github.com/spf13/viper"
 	"github.com/jinzhu/gorm"
+	validator "github.com/asaskevich/govalidator"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"fmt"
 	"time"
@@ -43,8 +44,15 @@ func DatabaseMigrate() {
 		}
 	}
 	instance.AutoMigrate(&Notification{}) // Create Notification table
+	instance.AutoMigrate(&Company{}) // Create Company table
+	instance.Model(&Notification{}).AddForeignKey("company_id", "companies(id)", "RESTRICT", "RESTRICT")
 }
 
 func GetConnection() *gorm.DB {
 	return instance
+}
+
+func ValidateModel(modelInstance interface{}) bool {
+	_, err := validator.ValidateStruct(modelInstance)
+	return err == nil
 }
