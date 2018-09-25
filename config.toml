@@ -1,5 +1,5 @@
 [environment]
-port = 5000
+port = 8080
 
 [database]
 host = "localhost"
@@ -7,3 +7,6 @@ username = "root"
 password = "root"
 dbname = "affdb"
 port = 3305
+
+[jwt]
+secret_key = "BcPuC=N2Q#L$eP-Dz7gXqZ-u5YeyVG^YUD$h@fDWkh#*h3d6#kc_m-Jk%_@=WET4uW=_M9egzyf!_PHaPkb28=zc!!sNgS5V&8sf^JYkNew6bXu6!fFW86f3"

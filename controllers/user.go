@@ -5,8 +5,6 @@ import (
 	"app/services"
 	"github.com/gin-gonic/gin"
 	"time"
-	_ "github.com/jinzhu/gorm"
-	_ "fmt"
 )
 
 func (e *Env) UserLogin(c *gin.Context) {
@@ -39,10 +37,20 @@ func (e *Env) UserLogin(c *gin.Context) {
 		wrongCred()
 		return
 	}
+	tokenString, err := services.CryptJWT(user.ID)
+	if (err != nil) {
+		c.JSON(200, gin.H{
+			"ok": false,
+			"message": "Can not log in",
+		})
+		return
+	}
 	user.LastLogin = time.Now()
 	e.db.Save(&user)
 	c.JSON(200, gin.H{
-		"message": user.Password,
-		"username": isValid,
+		"ok": true,
+		"payload": gin.H{
+			"id_token": tokenString,
+		},
 	})
 }

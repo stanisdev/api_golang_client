@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"app/models"
+	"app/middlewares"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"github.com/spf13/viper"
 )
 
 type Env struct {
@@ -15,6 +17,7 @@ func Start() {
 	router := gin.Default()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(middlewares.RequireAuthToken)
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{
@@ -34,5 +37,5 @@ func Start() {
 	{
 		notification.GET("/", env.NotificationList)
 	}
-	router.Run()
+	router.Run(":" + viper.GetString("environment.port"))
 }
