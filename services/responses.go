@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"fmt"
 )
 
 func WrongPostData(c *gin.Context) {
@@ -16,5 +17,13 @@ func WrongUrlParams(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, gin.H{
 		"ok": false,
 		"message": "Wrong URL params",
+	})
+}
+
+func ServerError(err error, c *gin.Context) {
+	fmt.Println(err)
+	c.JSON(http.StatusInternalServerError, gin.H{
+		"ok": false,
+		"message": "Server Error",
 	})
 }

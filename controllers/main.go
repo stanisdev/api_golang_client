@@ -37,7 +37,11 @@ func Start() {
 	{
 		notification.GET("/", env.NotificationList)
 		notification.POST("/create", env.NotificationCreate)
-		notification.GET("/remove/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationRemove)
+		notification.DELETE("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationRemove)
 	}
+	image := router.Group("/image")
+	{
+		image.POST("/upload", env.ImageUpload)
+	}	
 	router.Run(":" + viper.GetString("environment.port"))
 }
