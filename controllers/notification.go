@@ -4,7 +4,6 @@ import (
 	"app/models"
 	"app/services"
 	"github.com/gin-gonic/gin"
-	"strconv"
 	_ "fmt"
 )
 
@@ -44,7 +43,7 @@ func (e *Env) NotificationCreate(c *gin.Context) {
 		services.WrongPostData(c)
 		return
 	}
-	e.db.Create(&ntf)
+	e.db.Create(ntf)
 	c.JSON(200, gin.H{
 		"ok": true,
 		"payload": gin.H{
@@ -57,14 +56,9 @@ func (e *Env) NotificationCreate(c *gin.Context) {
 }
 
 func (e *Env) NotificationRemove(c *gin.Context) {
-	u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if (err != nil) {
-		services.WrongUrlParams(c)
-		return
-	}
-	id := uint(u64)
+	ntf := c.MustGet("notification").(*models.NotificationQuery)
+	e.db.Where("id = ?", ntf.Id).Limit(1).Unscoped().Delete(&models.Notification{})
 	c.JSON(200, gin.H{
 		"ok": true,
-		"id": uint(id),
 	})
 }

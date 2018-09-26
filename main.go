@@ -15,6 +15,6 @@ func init() {
 func main() {
 	services.ReadConfig()
 	models.DatabaseConnect()	
-	models.DatabaseMigrate()
+	// models.DatabaseMigrate()
 	controllers.Start()
 }

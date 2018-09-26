@@ -26,8 +26,8 @@ func Start() {
 		})
 	})
 	env := &Env{
-		db: models.GetConnection(), 
-		DBMethods: &models.DbMethods{},
+		db: models.GetConnection(),
+		DBMethods: models.GetDmInstance(),
 	}
 	user := router.Group("/user")
 	{
@@ -37,7 +37,7 @@ func Start() {
 	{
 		notification.GET("/", env.NotificationList)
 		notification.POST("/create", env.NotificationCreate)
-		notification.GET("/remove/:id", env.NotificationRemove)
+		notification.GET("/remove/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationRemove)
 	}
 	router.Run(":" + viper.GetString("environment.port"))
 }

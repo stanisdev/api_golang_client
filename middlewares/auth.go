@@ -40,4 +40,5 @@ func RequireAuthToken(c *gin.Context) {
 	user := models.User{} // Attach user to context
 	models.GetConnection().Where("ID = ?", userJWT.ID).First(&user)
 	c.Set("user", user)
+	c.Next()
 }

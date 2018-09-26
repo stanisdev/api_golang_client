@@ -10,11 +10,12 @@ import(
 	"time"
 )
 
-var instance *gorm.DB
-
 type DbMethods struct {
-	db *gorm.DB
+	DB *gorm.DB
 }
+
+var instance *gorm.DB
+var dmInstance *DbMethods
 
 func DatabaseConnect() {
 	params := viper.GetString("database.username") + ":" + viper.GetString("database.password") + "@/" + viper.GetString("database.dbname") + "?charset=utf8&parseTime=True&loc=Local"
@@ -25,6 +26,7 @@ func DatabaseConnect() {
 	db.LogMode(true)
 	fmt.Println("Database connected")
 	instance = db
+	dmInstance = &DbMethods{DB: instance}
 }
 
 func DatabaseMigrate() {
@@ -50,6 +52,10 @@ func DatabaseMigrate() {
 
 func GetConnection() *gorm.DB {
 	return instance
+}
+
+func GetDmInstance() *DbMethods {
+	return dmInstance
 }
 
 func ValidateModel(modelInstance interface{}) bool {
