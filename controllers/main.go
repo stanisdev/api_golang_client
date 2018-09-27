@@ -3,6 +3,7 @@ package controllers
 import (
 	"app/models"
 	"app/middlewares"
+	"app/services"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
@@ -17,6 +18,7 @@ func Start() {
 	router := gin.Default()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Static("/uploads", services.GetDynamicConfig()["UploadsDir"])
 	router.Use(middlewares.RequireAuthToken)
 
 	router.NoRoute(func(c *gin.Context) {

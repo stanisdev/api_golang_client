@@ -7,6 +7,7 @@ import (
 	"io"
 	"path"
 	_ "fmt"
+	"errors"
 )
 
 func (e *Env) ImageUpload(c *gin.Context) {
@@ -16,8 +17,21 @@ func (e *Env) ImageUpload(c *gin.Context) {
 		return
 	}
 	fileName := header.Filename
-	ext := path.Ext(fileName)
-	fileName = services.GenerateRandomString(16) + ext
+	ext := path.Ext(fileName)[1:]
+	allowedExt := []string{"jpg", "jpeg", "png", "gif"}
+	correctExt := false
+	for _, _ext := range allowedExt {
+		if (_ext == ext) {
+			correctExt = true
+			break
+		}
+	}
+	if (!correctExt) {
+		services.ServerError(errors.New("Not image file"), c)
+		return
+	}
+
+	fileName = services.GenerateRandomString(16) + "." + ext
 	dest := path.Join(services.GetDynamicConfig()["UploadsDir"], fileName)
 
 	out, err := os.Create(dest)
