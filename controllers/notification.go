@@ -8,10 +8,10 @@ import (
 )
 
 func (e *Env) NotificationList(c *gin.Context) {
-	// user := c.MustGet("user").(models.User)
+	ntfs := models.GetDmInstance().FindNotifications() // @TODO: Remove excessive fields
 	c.JSON(200, gin.H{
 		"ok": true,
-		"message": "Notification List",
+		"payload": ntfs,
 	})
 }
 
@@ -60,5 +60,19 @@ func (e *Env) NotificationRemove(c *gin.Context) {
 	e.db.Where("id = ?", ntf.Id).Limit(1).Unscoped().Delete(&models.Notification{})
 	c.JSON(200, gin.H{
 		"ok": true,
+	})
+}
+
+func (e *Env) NotificationGetById(c *gin.Context) {
+	ntf := c.MustGet("notification").(*models.NotificationQuery)
+	c.JSON(200, gin.H{
+		"ok": true,
+		"payload": gin.H{
+			"id": ntf.Id,
+			"text": ntf.Text,
+			"image": ntf.Image,
+			"company": ntf.Company,
+			"created_at": ntf.CreatedAt.Unix(),
+		},
 	})
 }

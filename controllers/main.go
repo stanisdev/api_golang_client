@@ -34,12 +34,15 @@ func Start() {
 	user := router.Group("/user")
 	{
 		user.POST("/login", env.UserLogin)
+		user.GET("/profile", env.UserProfile)
+		user.POST("/change/password", env.UserChangePassword)
 	}
 	notification := router.Group("/notification")
 	{
 		notification.GET("/", env.NotificationList)
 		notification.POST("/create", env.NotificationCreate)
 		notification.DELETE("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationRemove)
+		notification.GET("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationGetById)
 	}
 	image := router.Group("/image")
 	{

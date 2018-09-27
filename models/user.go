@@ -11,6 +11,7 @@ type User struct {
 	Password string `gorm:"size:60;not null"`
 	Salt string `gorm:"size:10;not null"`
 	LastLogin time.Time
+	PasswordChanged time.Time
 }
 
 func (dm DbMethods) UserFindOne(params *User) (*User, bool) {

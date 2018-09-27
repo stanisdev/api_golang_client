@@ -37,3 +37,18 @@ func (dm *DbMethods) FindNotificationById(id uint) *NotificationQuery {
 		Scan(ntf)
 	return ntf
 }
+
+func (dm *DbMethods) FindNotifications() *[]NotificationQuery {
+	ntfs := &[]NotificationQuery{}
+	dm.DB.Table("notifications n").
+		Select(`
+			n.text,
+			n.image,
+			c.name company
+		`).
+		Joins("LEFT JOIN companies c ON n.company_id = c.id").
+		Order("n.id ASC").
+		Scan(ntfs)
+
+	return ntfs
+}
