@@ -40,9 +40,10 @@ func Start() {
 	notification := router.Group("/notification")
 	{
 		notification.GET("/", env.NotificationList)
-		notification.POST("/create", env.NotificationCreate)
+		notification.POST("/create", middlewares.ValidateNotification, env.NotificationCreate)
 		notification.DELETE("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationRemove)
 		notification.GET("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationGetById)
+		notification.PUT("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, middlewares.ValidateNotification, env.NotificationUpdate)
 	}
 	image := router.Group("/image")
 	{

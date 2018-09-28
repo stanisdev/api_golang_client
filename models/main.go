@@ -30,6 +30,7 @@ func DatabaseConnect() {
 }
 
 func DatabaseMigrate() {
+	instance.Set("gorm:table_options", "charset=utf8")
 	instance.AutoMigrate(&User{}) // Create User table
 
 	salt := services.GenerateRandomString(10)
