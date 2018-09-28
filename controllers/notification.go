@@ -6,12 +6,36 @@ import (
 	_ "fmt"
 )
 
+type NotificationList struct {
+	Id uint `json:"id"`
+	Image string `json:"image"`
+	Message string `json:"message"`
+	Header string `json:"header"`
+	Priority uint `json:"priority"`
+	Expired string `json:"expired"`
+	Button string `json:"button"`
+	Link string `json:"link"`
+}
+
 func (e *Env) NotificationList(c *gin.Context) {
 	text := c.Query("text")
 	ntfs := models.GetDmInstance().FindNotifications(text) // @TODO: Remove excessive fields
+	var result []NotificationList
+	for _, ntf := range *ntfs {
+		result = append(result, NotificationList {
+			Id: ntf.ID,
+			Image: ntf.Image,
+			Message: ntf.Message,
+			Header: ntf.Header,
+			Priority: ntf.Priority,
+			Expired: ntf.GetExpired(),
+			Button: ntf.Button,
+			Link: ntf.Link,
+		})
+	}
 	c.JSON(200, gin.H{
 		"ok": true,
-		"payload": ntfs,
+		"payload": result,
 	})
 }
 
