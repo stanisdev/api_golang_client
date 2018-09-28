@@ -8,7 +8,8 @@ import (
 )
 
 func (e *Env) NotificationList(c *gin.Context) {
-	ntfs := models.GetDmInstance().FindNotifications() // @TODO: Remove excessive fields
+	text := c.Query("text")
+	ntfs := models.GetDmInstance().FindNotifications(text) // @TODO: Remove excessive fields
 	c.JSON(200, gin.H{
 		"ok": true,
 		"payload": ntfs,
@@ -58,6 +59,12 @@ func (e *Env) NotificationCreate(c *gin.Context) {
 func (e *Env) NotificationRemove(c *gin.Context) {
 	ntf := c.MustGet("notification").(*models.NotificationQuery)
 	e.db.Where("id = ?", ntf.Id).Limit(1).Unscoped().Delete(&models.Notification{})
+
+	var count int
+	e.db.Model(&models.Notification{}).Where("company_id = ?", ntf.CompanyId).Count(&count)
+	if (count < 1) {
+		e.db.Where("id = ?", ntf.CompanyId).Limit(1).Unscoped().Delete(&models.Company{})
+	}
 	c.JSON(200, gin.H{
 		"ok": true,
 	})

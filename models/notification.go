@@ -18,6 +18,7 @@ type NotificationQuery struct {
 	Text string
 	Image string
 	Company string
+	CompanyId uint
 }
 
 func (dm *DbMethods) FindNotificationById(id uint) *NotificationQuery {
@@ -28,6 +29,7 @@ func (dm *DbMethods) FindNotificationById(id uint) *NotificationQuery {
 			n.created_at,
 			n.text,
 			n.image,
+			n.company_id,
 			c.name company
 		`).
 		Joins("LEFT JOIN companies c ON n.company_id = c.id").
@@ -38,8 +40,9 @@ func (dm *DbMethods) FindNotificationById(id uint) *NotificationQuery {
 	return ntf
 }
 
-func (dm *DbMethods) FindNotifications() *[]NotificationQuery {
+func (dm *DbMethods) FindNotifications(text string) *[]NotificationQuery {
 	ntfs := &[]NotificationQuery{}
+	like := "%" + text + "%"
 	dm.DB.Table("notifications n").
 		Select(`
 			n.text,
@@ -47,6 +50,7 @@ func (dm *DbMethods) FindNotifications() *[]NotificationQuery {
 			c.name company
 		`).
 		Joins("LEFT JOIN companies c ON n.company_id = c.id").
+		Where("n.text LIKE ?", like).
 		Order("n.id ASC").
 		Scan(ntfs)
 
