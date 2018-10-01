@@ -6,11 +6,26 @@ import (
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"time"
+	_ "fmt"
 )
 
+type Notification struct {
+	Message string `json:"message"`
+	Image string `json:"image"`
+	Header string `json:"header"`
+	Priority string `json:"priority"`
+	Expired string `json:"expired"`
+	Button string `json:"button"`
+	Link string `json:"link"`
+	Company string `json:"company"`
+}
+
 func ValidateNotification(c *gin.Context) {
+	var ntf Notification
+	c.BindJSON(&ntf)
+
 	cmp := &models.Company{
-		Name: c.PostForm("company"),
+		Name: ntf.Company,
 	}
 	if (!models.ValidateModel(cmp)) {
 		services.WrongPostData(c)
@@ -28,33 +43,33 @@ func ValidateNotification(c *gin.Context) {
 		cmpId = exCmp.ID
 	}
 
-	exp, err0 := time.Parse("2006/01/02", c.PostForm("expired")) // Parse exppired data
+	exp, err0 := time.Parse("2006/01/02", ntf.Expired) // Parse exppired data
 	if (err0 != nil) {
 		services.WrongPostData(c)
 		c.Abort()
 		return
 	}
-	prior, err1 := strconv.ParseUint(c.PostForm("priority"), 10, 32)
+	prior, err1 := strconv.ParseUint(ntf.Priority, 10, 32)
 	if err1 != nil {
 		services.WrongPostData(c)
 		c.Abort()
 		return
 	}
-	ntf := &models.Notification{ // Creating Notification
-		Message: c.PostForm("message"),
-		Image: c.PostForm("image"),
-		Header: c.PostForm("header"),
+	ntfInstance := &models.Notification{ // Creating Notification
+		Message: ntf.Message,
+		Image: ntf.Image,
+		Header: ntf.Header,
 		Priority: uint(prior),
 		Expired: exp,
-		Button: c.PostForm("button"),
-		Link: c.PostForm("link"),
+		Button: ntf.Button,
+		Link: ntf.Link,
 		CompanyID: cmpId,
 	}
-	if (!models.ValidateModel(ntf)) {
+	if (!models.ValidateModel(ntfInstance)) {
 		services.WrongPostData(c)
 		c.Abort()
 		return
 	}
-	c.Set("notificationBlank", ntf)
+	c.Set("notificationBlank", ntfInstance)
 	c.Next()
 }

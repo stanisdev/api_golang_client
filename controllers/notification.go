@@ -3,6 +3,7 @@ package controllers
 import (
 	"app/models"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	_ "fmt"
 )
 
@@ -21,19 +22,24 @@ func (e *Env) NotificationList(c *gin.Context) {
 	text := c.Query("text")
 	ntfs := models.GetDmInstance().FindNotifications(text) // @TODO: Remove excessive fields
 	var result []NotificationList
+	var msg string
 	for _, ntf := range *ntfs {
+		msg = ntf.Message
+		if (len(msg) > 62) {
+			msg = msg[0:62] + "..."
+		}
 		result = append(result, NotificationList {
 			Id: ntf.ID,
 			Image: ntf.Image,
-			Message: ntf.Message,
+			Message: msg,
 			Header: ntf.Header,
 			Priority: ntf.Priority,
-			Expired: ntf.GetExpired(),
+			Expired: ntf.Expired.Format("Jan 2 2006"),
 			Button: ntf.Button,
 			Link: ntf.Link,
 		})
 	}
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"ok": true,
 		"payload": result,
 	})
@@ -116,7 +122,7 @@ func (e *Env) NotificationGetById(c *gin.Context) {
 			"header": ntf.Header,
 			"company": ntf.Company,
 			"priority": ntf.Priority,
-			"expired": ntf.GetExpired(),
+			"expired": ntf.Expired.Unix(),
 			"button": ntf.Button,
 			"link": ntf.Link,
 			"created_at": ntf.CreatedAt.Unix(),

@@ -8,19 +8,25 @@ import (
 	_ "fmt"
 )
 
+type Login struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func (e *Env) UserLogin(c *gin.Context) {
-	username := c.PostForm("username")
-	password := c.PostForm("password")
-	if (len(username) < 1 || len(password) < 1) {
+	var login Login
+	c.BindJSON(&login)
+		
+	if (len(login.Username) < 1 || len(login.Password) < 1) {
 		services.WrongPostData(c)
 		return
 	}
-	user, exists := e.DBMethods.UserFindOne(&models.User{Username: username})
+	user, exists := e.DBMethods.UserFindOne(&models.User{Username: login.Username})
 	wrongCred := func () {
 		c.JSON(200, gin.H{
 			"ok": false,
 			"errors": gin.H{
-				"username": "Wrong password/username",
+				"pass": "Wrong password/username",
 			},
 		})
 	}
@@ -28,7 +34,7 @@ func (e *Env) UserLogin(c *gin.Context) {
 		wrongCred()
 		return
 	}
-	isValid := services.CheckPasswordHash(password + user.Salt, user.Password)
+	isValid := services.CheckPasswordHash(login.Password + user.Salt, user.Password)
 	if (!isValid) {
 		wrongCred()
 		return

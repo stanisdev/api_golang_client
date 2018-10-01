@@ -14,10 +14,12 @@ type Env struct {
 	DBMethods *models.DbMethods
 }
 
+// @TODO: Generate ID for notifications
 func Start() {
 	router := gin.Default()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(middlewares.CORSMiddleware())
 	router.Static("/uploads", services.GetDynamicConfig()["UploadsDir"])
 	router.Use(middlewares.RequireAuthToken)
 
@@ -39,11 +41,11 @@ func Start() {
 	}
 	notification := router.Group("/notification")
 	{
-		notification.GET("/", env.NotificationList)
+		notification.GET("/list", env.NotificationList)
 		notification.POST("/create", middlewares.ValidateNotification, env.NotificationCreate)
-		notification.DELETE("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationRemove)
-		notification.GET("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationGetById)
-		notification.PUT("/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, middlewares.ValidateNotification, env.NotificationUpdate)
+		notification.GET("/delete/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationRemove)
+		notification.GET("/get/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationGetById)
+		notification.POST("/edit/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, middlewares.ValidateNotification, env.NotificationUpdate)
 	}
 	image := router.Group("/image")
 	{
