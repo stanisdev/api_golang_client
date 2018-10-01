@@ -5,9 +5,11 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import locale from 'element-ui/lib/locale/lang/en'
 
 Vue.use(VueAxios, axios)
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
+Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 

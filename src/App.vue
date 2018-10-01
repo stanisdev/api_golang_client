@@ -25,7 +25,13 @@ body {
 .page-container {
   box-sizing: border-box;
   height: 100%;
-  width: 940px;
+  width: 1080px;
   margin: 0 auto;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

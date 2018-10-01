@@ -8,7 +8,7 @@
       </el-submenu>
       <el-submenu v-bind:style="{ 'float': 'right' }" index="3">
         <template slot="title">Settings</template>
-        <el-menu-item index="3-change-password">Change password</el-menu-item>
+        <el-menu-item index="3-change-password">User profile</el-menu-item>
         <el-menu-item index="3-logout">Logout</el-menu-item>
       </el-submenu>
     </el-menu>

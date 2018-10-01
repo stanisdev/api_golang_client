@@ -3,31 +3,26 @@
     <menu-navigation></menu-navigation>
 
     <loader v-bind:is_showing="loading"></loader>
+    <transition name="fade">
     <div v-if="done">
-      <el-form ref="form" :model="notification" label-width="120px">
-        <el-form-item label="Activity form">
-          <el-input type="textarea" v-model="notification.text"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSave">Create</el-button>
-          <el-button>Cancel</el-button>
-        </el-form-item>
-      </el-form>
-
+      <notificationForm v-bind:mode="'edit'" v-bind:notification="notification"></notificationForm>
     </div>
+    </transition>
   </div>
 </template>
 
 <script>
 import MenuNavigation from '@/components/MenuNavigation.vue'
 import Loader from '@/components/Loader.vue'
+import NotificationForm from '@/components/NotificationForm.vue'
 import ApiService from '@/common/api.service'
 
 export default {
   name: 'NotificationView',
   components: {
     MenuNavigation,
-    Loader
+    Loader,
+    NotificationForm
   },
   created () {
     this.fetchNotification()
@@ -37,18 +32,25 @@ export default {
       const {id} = this.$route.params
       ApiService
         .setAuth().get
-        .call(this, `/notifications/${id}`)
+        .call(this, `/notification/get/${id}`)
         .then((data) => {
           this.done = true
+          let exp = data.payload.expired + '000'
+          exp = new Date(+exp)
+          const mnth = exp.getMonth() + 1
+          const day = exp.getDate()
+          exp = exp.getFullYear() + '-' + mnth + '-' + day
+          data.payload.expired = exp
           this.notification = data.payload
         })
         .catch(Symbol)
         .finally(() => {
+          const ta = document.getElementsByTagName('textarea')[0]
+          ta.style.height = '150px'
+          ta.style['font-size'] = '14px'
+          ta.style['font-family'] = "'Avenir', Helvetica, Arial, sans-serif"
           this.loading = false
         })
-    },
-    onSave () {
-      console.log('Saved')
     }
   },
   data () {

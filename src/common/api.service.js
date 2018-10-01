@@ -2,11 +2,11 @@ import Vue from 'vue'
 
 const GET_REQUEST_ERROR = 'Unknown error'
 const POST_REQUEST_ERROR = 'Unknown error during data transfer'
-const SERVER_URL = 'http://localhost:7000'
+const SERVER_URL = 'http://localhost:8080'
 
 const ApiService = {
   setAuth () {
-    Vue.axios.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('id_token')
+    Vue.axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('id_token')
     return this
   },
   get (slug = '') {

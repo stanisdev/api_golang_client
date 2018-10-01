@@ -65,7 +65,7 @@ export default {
         if (valid) {
           this.formSending = true
           ApiService.post
-            .call(this, '/user/login', { username, pass })
+            .call(this, '/user/login', { username, password: pass })
             .then((data) => {
               if (!data.ok) { // Show errors
                 errors = data.errors

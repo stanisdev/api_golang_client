@@ -1,20 +1,24 @@
 <template>
   <div>
     <menu-navigation></menu-navigation>
-    <span>Create Notification</span>
+    <notificationForm v-bind:mode="'create'" v-bind:notification="notification"></notificationForm>
   </div>
 </template>
 
 <script>
 import MenuNavigation from '@/components/MenuNavigation.vue'
+import NotificationForm from '@/components/NotificationForm.vue'
 
 export default {
   name: 'CreateNotification',
   components: {
-    MenuNavigation
+    MenuNavigation,
+    NotificationForm
   },
   data () {
-    return {}
+    return {
+      notification: {}
+    }
   },
   methods: {}
 }
