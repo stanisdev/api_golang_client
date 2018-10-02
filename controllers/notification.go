@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"app/models"
+	"app/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	_ "fmt"
 )
 
@@ -20,7 +22,32 @@ type NotificationList struct {
 
 func (e *Env) NotificationList(c *gin.Context) {
 	text := c.Query("text")
-	ntfs := models.GetDmInstance().FindNotifications(text) // @TODO: Remove excessive fields
+	var lmt, ofst int
+	limit := c.Query("limit") // @TODO: Move to middleware
+	offset := c.Query("offset")
+	if (len(offset) < 1) {
+		ofst = 0
+	} else {
+		o, err := strconv.Atoi(offset)
+		if err != nil || o < 0 {
+			services.WrongUrlParams(c)
+			return
+		} else {
+			ofst = o
+		}
+	}
+	if (len(limit) < 1) {
+		lmt = 10
+	} else {
+		i, err := strconv.Atoi(limit)
+		if err != nil || i < 1 {
+			services.WrongUrlParams(c)
+			return
+		} else {
+			lmt = i
+		}
+	}
+	ntfs := models.GetDmInstance().FindNotifications(text, lmt, ofst) // @TODO: Remove excessive fields
 	var result []NotificationList
 	var msg string
 	for _, ntf := range *ntfs {
@@ -127,5 +154,14 @@ func (e *Env) NotificationGetById(c *gin.Context) {
 			"link": ntf.Link,
 			"created_at": ntf.CreatedAt.Unix(),
 		},
+	})
+}
+
+func (e *Env) NotificationCount(c *gin.Context) {
+	var count int
+	e.db.Model(&models.Notification{}).Count(&count)
+	c.JSON(200, gin.H{
+		"ok": true,
+		"payload": count,
 	})
 }

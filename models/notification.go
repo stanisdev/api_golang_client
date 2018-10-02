@@ -50,7 +50,7 @@ func (dm *DbMethods) FindNotificationById(id uint) *NotificationQuery {
 	return ntf
 }
 
-func (dm *DbMethods) FindNotifications(message string) *[]NotificationQuery {
+func (dm *DbMethods) FindNotifications(message string, limit int, offset int) *[]NotificationQuery {
 	ntfs := &[]NotificationQuery{}
 	like := "%" + message + "%"
 	dm.DB.Table("notifications n").
@@ -70,6 +70,8 @@ func (dm *DbMethods) FindNotifications(message string) *[]NotificationQuery {
 		Joins("LEFT JOIN companies c ON n.company_id = c.id").
 		Where("n.message LIKE ?", like).
 		Order("n.id ASC").
+		Limit(limit).
+		Offset(offset).
 		Scan(ntfs)
 
 	return ntfs
