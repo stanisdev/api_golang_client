@@ -48,8 +48,6 @@ func (e *Env) ImageUpload(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"ok": true,
-		"payload": gin.H{
-			"image": fileName,
-		},
+		"payload": fileName,
 	})
 }

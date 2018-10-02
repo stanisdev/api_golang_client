@@ -74,22 +74,9 @@ func (e *Env) NotificationList(c *gin.Context) {
 
 func (e *Env) NotificationCreate(c *gin.Context) {
 	ntf := c.MustGet("notificationBlank").(*models.Notification)
-
 	e.db.Create(ntf)
 	c.JSON(200, gin.H{
 		"ok": true,
-		"payload": gin.H{
-			"id": ntf.ID,
-			"message": ntf.Message,
-			"image": ntf.Image,
-			"header": ntf.Header,
-			"priority": ntf.Priority,
-			"expired": ntf.GetExpired(),
-			"button": ntf.Button,
-			"link": ntf.Link,
-			"company": c.PostForm("company"),
-			"created_at": ntf.CreatedAt.Unix(),
-		},
 	})
 }
 
