@@ -43,6 +43,11 @@ export default {
   methods: {
     handleSelect (key, keyPath) {
       let path = key.split(/^\d+\-/ig)[1]
+      if (path === 'logout') {
+        localStorage.removeItem('id_token')
+        this.$router.push({ name: 'Login' })
+        return
+      }
       if (typeof path === 'string' && routes.hasOwnProperty(path)) {
         path = routes[path]
       } else {
