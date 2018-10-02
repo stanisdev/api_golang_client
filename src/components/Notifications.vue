@@ -60,7 +60,20 @@
       </el-table-column>
 
     </el-table>
+
     </transition>
+
+    <div v-if="totalCount > 10" class="block pgn-ntfs">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-sizes="[10, 15, 25, 50]"
+        :page-size="100"
+        layout="sizes, prev, pager, next"
+        :total="totalCount">
+      </el-pagination>
+    </div>
 
   </div>
 </template>
@@ -80,6 +93,15 @@ export default {
     this.fetchNotifications()
   },
   methods: {
+    handleSizeChange (val) {
+      this.perPage = val
+      this.currentPage = 1
+      this.fetchNotifications()
+    },
+    handleCurrentChange (val) {
+      this.currentPage = val
+      this.fetchNotifications()
+    },
     handleEdit (index, row) {
       this.$router.push({
         name: 'NotificationView',
@@ -109,12 +131,22 @@ export default {
       }).catch(Symbol)
     },
     fetchNotifications () {
-      ApiService
+      const tasks = []
+      const offset = (this.currentPage - 1) * this.perPage
+      const ntfUrl = '/notification/list?limit=' + this.perPage + '&offset=' + offset
+      this.done = false
+
+      tasks.push(ApiService
         .setAuth().get
-        .call(this, '/notification/list')
-        .then((data) => {
+        .call(this, ntfUrl))
+      tasks.push(ApiService
+        .setAuth().get
+        .call(this, '/notification/count'))
+      Promise.all(tasks)
+        .then(([ntfs, count]) => {
           this.done = true
-          this.notifications = data.payload || []
+          this.notifications = ntfs.payload || []
+          this.totalCount = +count.payload || 0
         })
         .catch(Symbol)
         .finally(() => {
@@ -126,7 +158,10 @@ export default {
     return {
       done: false,
       loading: true,
-      notifications: []
+      notifications: [],
+      currentPage: 1,
+      totalCount: 0,
+      perPage: 10
     }
   }
 }
@@ -134,4 +169,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .pgn-ntfs {
+    margin-top: 37px;
+    margin-bottom: 27px;
+  }
 </style>
