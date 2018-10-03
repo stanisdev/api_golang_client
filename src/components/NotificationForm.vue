@@ -214,6 +214,14 @@ export default {
           const m = exp.getMonth() + 1
           const d = exp.getDate()
           exp = exp.getFullYear() + '/' + (m < 10 ? '0' + m : m) + '/' + (d < 10 ? '0' + d : d)
+        } else if (typeof exp === 'string') { // eslint-disable-next-line
+          exp = exp.replace(/\-/g, '/')
+          exp = exp.split('/').map((e) => {
+            if (+e < 10) {
+              return '0' + e
+            }
+            return e
+          }).join('/')
         }
         if (valid && !this.imgInvalid) {
           const ntf = this.notification
@@ -223,7 +231,7 @@ export default {
               message: ntf.message,
               image: this.selectedImage,
               header: ntf.header,
-              priority: ntf.priority,
+              priority: ntf.priority.toString(),
               expired: exp,
               button: ntf.button,
               link: ntf.link,

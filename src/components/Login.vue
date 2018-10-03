@@ -1,21 +1,24 @@
 <template>
-  <div>
-    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-      <h2>Login Page</h2>
+  <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-      <el-form-item label="Username" prop="username">
+    <div style="margin: 0 auto; width: 200px; text-align: center; margin-top: 42px; margin-bottom: 35px;">
+      <h2>Sign in to Panel</h2>
+    </div>
+
+    <div style="border: 1px solid #ebebeb; border-radius: 3px; transition: .2s; padding: 30px 30px 4px 0px; width: 420px; margin: 0 auto;">
+      <el-form-item v-bind:style="{ marginLeft: '-17px' }" label="Username" prop="username">
         <el-input v-model="ruleForm.username" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item label="Password" prop="pass">
+      <el-form-item v-bind:style="{ marginLeft: '-17px' }" label="Password" prop="pass">
         <el-input v-model="ruleForm.pass" type="password" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" @click="submitForm(ruleForm.username, ruleForm.pass)" :loading="formSending">Login</el-button>
+      <el-form-item v-bind:style="{ marginLeft: '-17px' }">
+        <el-button type="primary" @click="submitForm(ruleForm.username, ruleForm.pass)" :loading="formSending">Sign in</el-button>
       </el-form-item>
-    </el-form>
-  </div>
+    </div>
+  </el-form>
 </template>
 
 <script>

@@ -8,7 +8,7 @@
       </el-submenu>
       <el-submenu v-bind:style="{ 'float': 'right' }" index="3">
         <template slot="title">Settings</template>
-        <el-menu-item index="3-change-password">User profile</el-menu-item>
+        <el-menu-item index="3-user-profile">User profile</el-menu-item>
         <el-menu-item index="3-logout">Logout</el-menu-item>
       </el-submenu>
     </el-menu>
@@ -19,12 +19,13 @@
 const routes = {
   'create-notification': 'CreateNotification',
   notifications: 'Notifications',
-  'change-password': 'ChangePassword'
+  'user-profile': 'UserProfile'
 }
 
 const urls = {
   '/notifications': '1-notifications',
-  '/notifications/create': '2-create-notification'
+  '/notifications/create': '2-create-notification',
+  '/user/profile': '3-user-profile'
 }
 
 /* eslint-disable */
@@ -36,6 +37,7 @@ export default {
     if (!url) {
       url = '1-notifications'
     }
+    console.log(url)
     return {
       activeIndex: url
     }
