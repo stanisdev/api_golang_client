@@ -57,6 +57,7 @@
 
 <script>
 import ApiService from '@/common/api.service'
+import Env from '@/env.js'
 
 export default {
   name: 'NotificationForm',
@@ -156,7 +157,7 @@ export default {
   mounted () {
     if (this.mode === 'edit') {
       const img = this.notification.image
-      document.getElementById('imagePreview').innerHTML = `<img src="http://localhost:8080/uploads/${img}">`
+      document.getElementById('imagePreview').innerHTML = `<img src="${Env.UPLOADS_URL}/${img}">`
       this.selectedImage = img
     }
   },
@@ -168,7 +169,7 @@ export default {
         const file = selBtn.files[0]
         const fd = new FormData()
         fd.append('image', file)
-        fetch('http://localhost:8080/image/upload', {
+        fetch(Env.API_URL + '/image/upload', {
           method: 'POST',
           body: fd,
           headers: {
@@ -182,7 +183,7 @@ export default {
           if (ok !== true || typeof payload !== 'string') {
             throw new Error('Image not uploaded correctly')
           }
-          const path = 'http://localhost:8080/uploads/' + payload
+          const path = Env.UPLOADS_URL + '/' + payload
           this.selectedImage = payload
           this.imgInvalid = false
 

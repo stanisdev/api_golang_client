@@ -1,8 +1,8 @@
 import Vue from 'vue'
+import Env from '@/env.js'
 
 const GET_REQUEST_ERROR = 'Unknown error'
 const POST_REQUEST_ERROR = 'Unknown error during data transfer'
-const SERVER_URL = 'http://localhost:8080'
 
 const ApiService = {
   setAuth () {
@@ -12,7 +12,7 @@ const ApiService = {
   get (slug = '') {
     return new Promise((resolve, reject) => {
       Vue.axios
-        .get(SERVER_URL + slug)
+        .get(Env.API_URL + slug)
         .then((response) => {
           const {data, status} = response
           if (status !== 200 || !(data instanceof Object) || (!data.ok && !(data.errors instanceof Object))) {
@@ -29,7 +29,7 @@ const ApiService = {
   post (slug = '', params) {
     return new Promise((resolve, reject) => {
       Vue.axios
-        .post(SERVER_URL + slug, params)
+        .post(Env.API_URL + slug, params)
         .then((response) => {
           const {data, status} = response
           if (status !== 200 || !(data instanceof Object) || (!data.ok && !(data.errors instanceof Object))) {

@@ -37,7 +37,6 @@ export default {
     if (!url) {
       url = '1-notifications'
     }
-    console.log(url)
     return {
       activeIndex: url
     }
