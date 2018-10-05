@@ -42,7 +42,7 @@ func Start() {
 	}
 	notification := router.Group(prefix + "/notification")
 	{
-		notification.GET("/list", env.NotificationList)
+		notification.GET("/list", middlewares.LimitOffset, env.NotificationList)
 		notification.POST("/create", middlewares.ValidateNotification, env.NotificationCreate)
 		notification.GET("/delete/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationRemove)
 		notification.GET("/get/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, env.NotificationGetById)

@@ -3,23 +3,14 @@ package controllers
 import (
 	"app/models"
 	"app/services"
+	structs "app/structures"
 	"github.com/gin-gonic/gin"
 	"time"
 	_ "fmt"
 )
 
-type Login struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type ChangePassword struct {
-	OldPassword string `json:"old_password"`
-	NewPassword string `json:"new_password"`
-}
-
 func (e *Env) UserLogin(c *gin.Context) {
-	var login Login
+	var login structs.UserLogin
 	c.BindJSON(&login)
 		
 	if (len(login.Username) < 1 || len(login.Password) < 1) {
@@ -76,7 +67,7 @@ func (e *Env) UserProfile(c *gin.Context) {
 }
 
 func (e *Env) UserChangePassword(c *gin.Context) {
-	var chp ChangePassword
+	var chp structs.UserChangePassword
 	c.BindJSON(&chp)
 
 	if (len(chp.OldPassword) < 1 || len(chp.NewPassword) < 1 || chp.OldPassword == chp.NewPassword) {

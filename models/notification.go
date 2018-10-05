@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/jinzhu/gorm"
 	"time"
+	"strconv"
 )
 
 type Notification struct {
@@ -24,6 +25,13 @@ type NotificationQuery struct {
 
 func (n Notification) GetExpired() string {
 	return n.Expired.Format("2006/01/02")
+}
+
+func (n Notification) GetExpiredForAll() string {
+	day := strconv.Itoa(n.Expired.Day())
+	year := strconv.Itoa(n.Expired.Year())
+	month := strconv.Itoa(int(n.Expired.Month()))
+	return  day + "/" + month + "/" + year
 }
 
 func (dm *DbMethods) FindNotificationById(id uint) *NotificationQuery {
@@ -72,6 +80,29 @@ func (dm *DbMethods) FindNotifications(message string, limit int, offset int) *[
 		Order("n.id ASC").
 		Limit(limit).
 		Offset(offset).
+		Scan(ntfs)
+
+	return ntfs
+}
+
+func (dm *DbMethods) FindAllNotifications() *[]NotificationQuery {
+	ntfs := &[]NotificationQuery{}
+	dm.DB.Table("notifications n").
+		Select(`
+			n.id,
+			n.message,
+			n.image,
+			n.header,
+			n.priority,
+			n.expired,
+			n.button,
+			n.link,
+			n.company_id,
+			n.created_at,
+			c.name company
+		`).
+		Joins("LEFT JOIN companies c ON n.company_id = c.id").
+		Order("n.id ASC").
 		Scan(ntfs)
 
 	return ntfs
