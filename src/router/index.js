@@ -5,6 +5,7 @@ import Login from '@/components/Login'
 import CreateNotification from '@/components/CreateNotification'
 import NotificationView from '@/components/NotificationView'
 import UserProfile from '@/components/UserProfile'
+import NotFound from '@/components/NotFound'
 
 Vue.use(Router)
 
@@ -49,12 +50,25 @@ const router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/notFound',
+      name: 'NotFound',
+      component: NotFound
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
   const hasToken = typeof localStorage.getItem('id_token') === 'string'
+  if (to.path === '/') {
+    return next({
+      path: '/login'
+    })
+  }
+  if (!to.matched.length) {
+    return next('/notFound')
+  }
   if (to.path !== '/login' && to.meta instanceof Object && to.meta.requiresAuth && !hasToken) {
     return next({
       path: '/login',
