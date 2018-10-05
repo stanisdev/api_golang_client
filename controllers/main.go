@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
+	_ "fmt"
 )
 
 type Env struct {
@@ -14,7 +15,6 @@ type Env struct {
 	DBMethods *models.DbMethods
 }
 
-// @TODO: Generate ID for notifications
 func Start() {
 	router := gin.Default()
 	router.Use(gin.Logger())
@@ -33,13 +33,14 @@ func Start() {
 		db: models.GetConnection(),
 		DBMethods: models.GetDmInstance(),
 	}
-	user := router.Group("/user")
+	prefix := viper.GetString("environment.prefix")
+	user := router.Group(prefix + "/user")
 	{
 		user.POST("/login", env.UserLogin)
 		user.GET("/profile", env.UserProfile)
 		user.POST("/change/password", env.UserChangePassword)
 	}
-	notification := router.Group("/notification")
+	notification := router.Group(prefix + "/notification")
 	{
 		notification.GET("/list", env.NotificationList)
 		notification.POST("/create", middlewares.ValidateNotification, env.NotificationCreate)
@@ -48,9 +49,10 @@ func Start() {
 		notification.POST("/edit/:id", middlewares.UrlIdCorrectness, middlewares.FindNotificationById, middlewares.ValidateNotification, env.NotificationUpdate)
 		notification.GET("/count", env.NotificationCount)
 	}
-	image := router.Group("/image")
+	image := router.Group(prefix + "/image")
 	{
 		image.POST("/upload", env.ImageUpload)
 	}	
+	router.GET("/notifications", env.NotificationPublic)
 	router.Run(":" + viper.GetString("environment.port"))
 }

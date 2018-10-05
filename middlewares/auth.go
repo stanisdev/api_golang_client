@@ -4,6 +4,7 @@ import (
 	"app/services"
 	"app/models"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"net/http"
 	"strings"
 )
@@ -17,10 +18,11 @@ func invalidToken(c *gin.Context) {
 }
 
 func RequireAuthToken(c *gin.Context) {
-	publicUrls := []string{ "/user/login" }
+	publicUrls := []string{ "/user/login", "/notifications" }
 	currentUrl := c.Request.URL.Path
+	prefix := viper.GetString("environment.prefix")
 	for _, url := range publicUrls {
-    if (url == currentUrl) {
+    if (prefix + url == currentUrl) {
 			c.Next()
 			return
 		}

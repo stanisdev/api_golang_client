@@ -13,6 +13,11 @@ type Login struct {
 	Password string `json:"password"`
 }
 
+type ChangePassword struct {
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+
 func (e *Env) UserLogin(c *gin.Context) {
 	var login Login
 	c.BindJSON(&login)
@@ -71,14 +76,15 @@ func (e *Env) UserProfile(c *gin.Context) {
 }
 
 func (e *Env) UserChangePassword(c *gin.Context) {
-	oldPass := c.PostForm("old_password")
-	newPass := c.PostForm("new_password")
-	if (len(oldPass) < 1 || len(newPass) < 1 || oldPass == newPass) {
+	var chp ChangePassword
+	c.BindJSON(&chp)
+
+	if (len(chp.OldPassword) < 1 || len(chp.NewPassword) < 1 || chp.OldPassword == chp.NewPassword) {
 		services.WrongPostData(c)
 		return
 	}
 	user := c.MustGet("user").(models.User)
-	isValid := services.CheckPasswordHash(oldPass + user.Salt, user.Password)
+	isValid := services.CheckPasswordHash(chp.OldPassword + user.Salt, user.Password)
 	if (!isValid) {
 		c.JSON(200, gin.H{
 			"ok": false,
@@ -89,7 +95,7 @@ func (e *Env) UserChangePassword(c *gin.Context) {
 		return
 	}
 	salt := services.GenerateRandomString(10)
-	hash, err := services.GetPasswordHash(newPass + salt)
+	hash, err := services.GetPasswordHash(chp.NewPassword + salt)
 	if (err != nil) {
 		services.ServerError(err, c)
 		return

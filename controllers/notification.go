@@ -18,6 +18,7 @@ type NotificationList struct {
 	Expired string `json:"expired"`
 	Button string `json:"button"`
 	Link string `json:"link"`
+	Company string `json:"company"`
 }
 
 func (e *Env) NotificationList(c *gin.Context) {
@@ -47,7 +48,7 @@ func (e *Env) NotificationList(c *gin.Context) {
 			lmt = i
 		}
 	}
-	ntfs := models.GetDmInstance().FindNotifications(text, lmt, ofst) // @TODO: Remove excessive fields
+	ntfs := models.GetDmInstance().FindNotifications(text, lmt, ofst)
 	var result []NotificationList
 	var msg string
 	for _, ntf := range *ntfs {
@@ -57,12 +58,8 @@ func (e *Env) NotificationList(c *gin.Context) {
 		}
 		result = append(result, NotificationList {
 			Id: ntf.ID,
-			Image: ntf.Image,
 			Message: msg,
-			Header: ntf.Header,
-			Priority: ntf.Priority,
 			Expired: ntf.Expired.Format("Jan 2 2006"),
-			Button: ntf.Button,
 			Link: ntf.Link,
 		})
 	}
@@ -150,5 +147,11 @@ func (e *Env) NotificationCount(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"ok": true,
 		"payload": count,
+	})
+}
+
+func (e *Env) NotificationPublic(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"ok": true,
 	})
 }

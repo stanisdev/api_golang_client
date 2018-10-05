@@ -1,5 +1,6 @@
 [environment]
 port = 8080
+prefix = "/u8vd7ya2t3p"
 
 [database]
 host = "localhost"
