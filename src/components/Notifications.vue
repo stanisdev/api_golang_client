@@ -111,24 +111,41 @@ export default {
       })
     },
     handleDelete (index, row) {
-      const {id} = row
-      this.$confirm('This will permanently delete the notification. Continue?', 'Warning', {
+      this.$msgbox({
+        title: 'Warning',
+        message: 'This will permanently delete the notification. Continue?',
+        type: 'warning',
+        showCancelButton: true,
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(() => {
-        ApiService
-          .setAuth().get
-          .call(this, '/notification/delete/' + id)
-          .then((data) => {
-            this.notifications = this.notifications.filter((ntf) => +ntf.id !== +id)
-            this.$message({
-              message: 'Notification was removed successfully',
-              type: 'success'
-            })
-          })
-          .catch(Symbol)
-      }).catch(Symbol)
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = 'Loading...'
+
+            const {id} = row
+            ApiService
+              .setAuth().get
+              .call(this, '/notification/delete/' + id)
+              .then((data) => {
+                this.notifications = this.notifications.filter((ntf) => +ntf.id !== +id)
+                this.$message({
+                  message: 'Notification was removed successfully',
+                  type: 'success'
+                })
+              })
+              .catch(Symbol)
+              .finally(() => {
+                done()
+                setTimeout(() => {
+                  instance.confirmButtonLoading = false
+                }, 300)
+              })
+          } else {
+            done()
+          }
+        }
+      }).then(Symbol).catch(Symbol)
     },
     fetchNotifications () {
       const tasks = []
