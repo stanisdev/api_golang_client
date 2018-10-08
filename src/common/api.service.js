@@ -61,6 +61,12 @@ const ApiService = {
     })
   },
   post (slug = '', params) {
+    Object.keys(params).forEach((key) => {
+      const value = params[key]
+      if (typeof value === 'string') {
+        params[key] = value.trim()
+      }
+    })
     return new Promise((resolve, reject) => {
       connectToServer(Vue.axios.post(Env.API_URL + slug, params))
         .then((response) => {
