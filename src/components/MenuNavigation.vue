@@ -4,12 +4,12 @@
       <el-menu-item index="1-notifications">Notifications</el-menu-item>
       <el-submenu index="2">
         <template slot="title">Workspace</template>
-        <el-menu-item index="2-create-notification">Create notification</el-menu-item>
+        <el-menu-item v-bind:style="{ fontFamily: 'Avenir, Helvetica, Arial, sans-serif' }" index="2-create-notification">Create notification</el-menu-item>
       </el-submenu>
       <el-submenu v-bind:style="{ 'float': 'right' }" index="3">
         <template slot="title">Settings</template>
-        <el-menu-item index="3-user-profile">User profile</el-menu-item>
-        <el-menu-item index="3-logout">Logout</el-menu-item>
+        <el-menu-item v-bind:style="{fontFamily: 'Avenir, Helvetica, Arial, sans-serif'}" index="3-user-profile">User profile</el-menu-item>
+        <el-menu-item v-bind:style="{fontFamily: 'Avenir, Helvetica, Arial, sans-serif'}" index="3-logout">Logout</el-menu-item>
       </el-submenu>
     </el-menu>
   </div>

@@ -5,8 +5,7 @@
   <el-dialog
     title="Change Password"
     :visible.sync="dialogVisible"
-    width="30%"
-    :before-close="handleClose">
+    width="30%">
 
     <el-form :rules="rules" ref="PForm" :model="form" label-width="150px">
       <el-form-item label="Current password" prop="old_password">

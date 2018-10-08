@@ -26,7 +26,7 @@
         width="100">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
-            <p>{{ scope.row.link }}</p>
+            <p v-bind:style="{fontFamily: 'Avenir, Helvetica, Arial, sans-serif'}">{{ scope.row.link }}</p>
             <div slot="reference" class="name-wrapper">
               <el-tag size="medium">Link</el-tag>
             </div>
@@ -92,6 +92,15 @@ export default {
   created () {
     this.fetchNotifications()
   },
+  mounted () {
+    setTimeout(() => {
+      document.querySelectorAll('[class*=el-select-dropdown]').forEach((elem) => {
+        if (elem.tagName.toLowerCase() === 'li') {
+          elem.style['font-family'] = 'Avenir, Helvetica, Arial, sans-serif'
+        }
+      })
+    }, 400)
+  },
   methods: {
     handleSizeChange (val) {
       this.perPage = val
@@ -111,6 +120,11 @@ export default {
       })
     },
     handleDelete (index, row) {
+      setTimeout(() => {
+        document.querySelectorAll('[class=el-message-box]').forEach((elem) => {
+          elem.style['font-family'] = 'Avenir, Helvetica, Arial, sans-serif'
+        })
+      }, 25)
       this.$msgbox({
         title: 'Warning',
         message: 'This will permanently delete the notification. Continue?',

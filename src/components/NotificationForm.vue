@@ -2,33 +2,33 @@
   <el-form :rules="rules" ref="form" :model="notification" label-width="120px">
 
     <el-form-item label="Header" prop="header">
-      <el-input v-model="notification.header"></el-input>
+      <el-input class="inpCustom" v-model="notification.header"></el-input>
     </el-form-item>
 
     <el-form-item label="Button" prop="button">
-      <el-input v-model="notification.button"></el-input>
+      <el-input class="inpCustom" v-model="notification.button"></el-input>
     </el-form-item>
 
     <el-form-item label="Destination" prop="link">
-      <el-input v-model="notification.link"></el-input>
+      <el-input class="inpCustom" v-model="notification.link"></el-input>
     </el-form-item>
 
     <el-form-item label="Company" prop="company">
-      <el-input v-model="notification.company"></el-input>
+      <el-input class="inpCustom" v-model="notification.company"></el-input>
     </el-form-item>
 
     <el-form-item label="Expired" prop="expired">
-      <el-col :span="11">
-        <el-date-picker type="date" v-model="notification.expired" placeholder="Pick an expired date" style="width: 100%;"></el-date-picker>
+      <el-col v-bind:style="{ width: '70%' }" :span="11">
+        <el-date-picker @focus="datepickerFocused" type="date" v-model="notification.expired" placeholder="Pick an expired date" style="width: 100%;"></el-date-picker>
       </el-col>
     </el-form-item>
 
     <el-form-item label="Priority" prop="priority">
-      <el-input v-model="notification.priority"></el-input>
+      <el-input class="inpCustom" v-model="notification.priority"></el-input>
     </el-form-item>
 
     <el-form-item label="Message" prop="message">
-      <el-input type="textarea" v-model="notification.message"></el-input>
+      <el-input class="inpCustom" type="textarea" v-model="notification.message"></el-input>
     </el-form-item>
 
     <el-form-item label="Image">
@@ -160,8 +160,21 @@ export default {
       document.getElementById('imagePreview').innerHTML = `<img src="${Env.UPLOADS_URL}/${img}">`
       this.selectedImage = img
     }
+    const ta = document.getElementsByTagName('textarea')[0]
+    if (ta instanceof Object) {
+      ta.style.height = '150px'
+      ta.style['font-size'] = '14px'
+      ta.style['font-family'] = "'Avenir', Helvetica, Arial, sans-serif"
+    }
   },
   methods: {
+    datepickerFocused () {
+      setTimeout(() => {
+        document.querySelectorAll('[class*=el-date-picker]').forEach((elem) => {
+          elem.style['font-family'] = 'Avenir, Helvetica, Arial, sans-serif'
+        })
+      }, 70)
+    },
     onUploadImage () {
       const selBtn = document.getElementById('selectImage')
       selBtn.click()
@@ -274,5 +287,8 @@ export default {
     font-size: 12px;
     position: absolute;
     margin-top: -9px;
+  }
+  .inpCustom {
+    width: 70%
   }
 </style>

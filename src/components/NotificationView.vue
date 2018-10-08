@@ -46,12 +46,6 @@ export default {
         .catch(Symbol)
         .finally(() => {
           this.loading = false
-          const ta = document.getElementsByTagName('textarea')[0]
-          if (ta instanceof Object) {
-            ta.style.height = '150px'
-            ta.style['font-size'] = '14px'
-            ta.style['font-family'] = "'Avenir', Helvetica, Arial, sans-serif"
-          }
         })
     }
   },
