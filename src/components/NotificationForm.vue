@@ -58,6 +58,7 @@
 <script>
 import ApiService from '@/common/api.service'
 import Env from '@/env.js'
+import UrlValidator from 'url-regex'
 
 export default {
   name: 'NotificationForm',
@@ -100,7 +101,25 @@ export default {
         callback()
       }
     }
-    const validateExpired = (role, value, callback) => {
+    const validateExpired = (role, value, callback) => { // eslint-disable-next-line
+      const validateLessThen = (d) => {
+        const now = new Date().getTime()
+        if (d.getTime() <= now) {
+          callback(new Error('Please input the date greater than now'))
+          return false
+        }
+        return true
+      } // eslint-disable-next-line
+      if (typeof value === 'string' && value.length > 0 && /^[0-9]{4}\-[0-9]{1,2}\-[0-9]{1,2}$/.test(value) && new Date(value).toString() !== 'Invalid Date') {
+        const d = new Date(value)
+        if (!validateLessThen(d)) {
+          return
+        }
+      } else if (typeof value === 'object') {
+        if (!validateLessThen(value)) {
+          return
+        }
+      }
       if (!value) {
         callback(new Error('Please input the expired date'))
       } else {
@@ -110,6 +129,8 @@ export default {
     const validateLink = (role, value, callback) => {
       if (!value) {
         callback(new Error('Please input the destination'))
+      } else if (typeof value === 'string' && !UrlValidator({exact: true}).test(value)) {
+        callback(new Error('Wrong URL'))
       } else {
         callback()
       }
