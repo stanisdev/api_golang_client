@@ -5,6 +5,8 @@ import Login from '@/components/Login'
 import CreateNotification from '@/components/CreateNotification'
 import NotificationView from '@/components/NotificationView'
 import UserProfile from '@/components/UserProfile'
+import Publishers from '@/components/Publishers'
+import CreatePublisher from '@/components/CreatePublisher'
 import NotFound from '@/components/NotFound'
 
 Vue.use(Router)
@@ -47,6 +49,22 @@ const router = new Router({
       path: '/user/profile',
       name: 'UserProfile',
       component: UserProfile,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/publishers',
+      name: 'Publishers',
+      component: Publishers,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/publishers/create',
+      name: 'CreatePublisher',
+      component: CreatePublisher,
       meta: {
         requiresAuth: true
       }

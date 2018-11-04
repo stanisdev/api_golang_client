@@ -1,10 +1,12 @@
 <template>
   <div class="top-nav-menu">
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+      <el-menu-item index="0-publishers">Publishers</el-menu-item>
       <el-menu-item index="1-notifications">Notifications</el-menu-item>
       <el-submenu index="2">
-        <template slot="title">Workspace</template>
+        <template slot="title">Actions</template>
         <el-menu-item v-bind:style="{ fontFamily: 'Avenir, Helvetica, Arial, sans-serif' }" index="2-create-notification">Create notification</el-menu-item>
+        <el-menu-item v-bind:style="{ fontFamily: 'Avenir, Helvetica, Arial, sans-serif' }" index="2-create-publisher">Create publisher</el-menu-item>
       </el-submenu>
       <el-submenu v-bind:style="{ 'float': 'right' }" index="3">
         <template slot="title">Settings</template>
@@ -18,13 +20,17 @@
 <script>
 const routes = {
   'create-notification': 'CreateNotification',
+  'create-publisher': 'CreatePublisher',
   notifications: 'Notifications',
-  'user-profile': 'UserProfile'
+  'user-profile': 'UserProfile',
+  publishers: 'Publishers'
 }
 
 const urls = {
+  '/publishers': '0-publishers',
   '/notifications': '1-notifications',
   '/notifications/create': '2-create-notification',
+  '/publishers/create': '2-create-publisher',
   '/user/profile': '3-user-profile'
 }
 
