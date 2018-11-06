@@ -39,9 +39,14 @@ export default {
   name: 'MenuNavigation',
   data () {
     let url = window.location.href.split('#')[1];
-    url = urls[url]
-    if (!url) {
-      url = '1-notifications'
+    if (typeof url === 'string' && url.startsWith('/publishers/edit')) {
+      url = '0-publishers';
+    }
+    else {
+      url = urls[url]
+      if (!url) {
+        url = '1-notifications'
+      }
     }
     return {
       activeIndex: url

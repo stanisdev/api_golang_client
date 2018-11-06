@@ -230,7 +230,8 @@ export default {
     },
     onSave () {
       let url = '/notification'
-      if (this.mode === 'create') {
+      const {mode} = this
+      if (mode === 'create') {
         url += '/create'
       } else {
         url += '/edit/' + this.notification.id
@@ -282,7 +283,7 @@ export default {
                   type: 'success'
                 })
               } else {
-                throw new Error('Notification was not created')
+                throw new Error(`Notification was not ${mode}d`)
               }
             })
             .catch(Symbol)

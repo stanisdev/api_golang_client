@@ -19,6 +19,9 @@
       <el-table-column
         prop="name"
         label="Name">
+        <template slot-scope="scope">
+          <a class="a-class" @click="handleClickPublisher(scope.row.id)">{{ scope.row.name }}</a>
+        </template>
       </el-table-column>
 
       <el-table-column
@@ -75,7 +78,64 @@ export default {
     this.fetchPublishers()
   },
   methods: {
-    handleEdit (index, row) {},
+    handleClickPublisher (id) {
+      this.$router.push({
+        name: 'Notifications',
+        query: {
+          pub: id
+        }
+      })
+    },
+    handleEdit (index, row) {
+      this.$router.push({
+        name: 'PublisherView',
+        params: {
+          id: row.id
+        }
+      })
+    },
+    handleDelete (index, row) {
+      setTimeout(() => {
+        document.querySelectorAll('[class=el-message-box]').forEach((elem) => {
+          elem.style['font-family'] = 'Avenir, Helvetica, Arial, sans-serif'
+        })
+      }, 25)
+      this.$msgbox({
+        title: 'Warning',
+        message: 'This will permanently delete the publisher, but the notifications will not be deleted. Continue?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = 'Loading...'
+
+            const {id} = row
+            ApiService
+              .setAuth().get
+              .call(this, '/publisher/delete/' + id)
+              .then((data) => {
+                this.publishers = this.publishers.filter((publ) => +publ.id !== +id)
+                this.$message({
+                  message: 'Publisher was removed successfully',
+                  type: 'success'
+                })
+              })
+              .catch(Symbol)
+              .finally(() => {
+                done()
+                setTimeout(() => {
+                  instance.confirmButtonLoading = false
+                }, 300)
+              })
+          } else {
+            done()
+          }
+        }
+      }).then(Symbol).catch(Symbol)
+    },
     handleSizeChange (val) {
       this.perPage = val
       this.currentPage = 1
@@ -128,5 +188,10 @@ export default {
   .pgn-ntfs {
     margin-top: 37px;
     margin-bottom: 27px;
+  }
+  .a-class {
+    color: #409eff;
+    text-decoration: none;
+    cursor: pointer;
   }
 </style>

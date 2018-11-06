@@ -19,6 +19,18 @@
       <el-table-column
         prop="message"
         label="Message">
+        <template slot-scope="scope">
+          <span>{{ cropString(scope.row.message, 38) }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="company"
+        label="Publisher"
+        width="240">
+        <template slot-scope="scope">
+          <span>{{ cropString(scope.row.company, 22) }}</span>
+        </template>
       </el-table-column>
 
       <el-table-column
@@ -35,14 +47,14 @@
       </el-table-column>
 
       <el-table-column
-        width="50"
+        width="17"
         label="">
       </el-table-column>
 
       <el-table-column
         property="expired"
         label="Expired"
-        width="150">
+        width="120">
       </el-table-column>
 
       <el-table-column
@@ -102,6 +114,15 @@ export default {
     }, 400)
   },
   methods: {
+    cropString (string, length) {
+      if (typeof string !== 'string') {
+        return ''
+      }
+      if (string.length <= length) {
+        return string
+      }
+      return string.substr(0, length) + '...'
+    },
     handleSizeChange (val) {
       this.perPage = val
       this.currentPage = 1

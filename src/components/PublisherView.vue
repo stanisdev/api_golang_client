@@ -5,7 +5,7 @@
     <loader v-bind:is_showing="loading"></loader>
     <transition name="fade">
       <div v-if="done">
-        <publisherForm v-bind:mode="'create'" v-bind:publisher="publisher"></publisherForm>
+        <publisherForm v-bind:mode="'edit'" v-bind:publisher="publisher"></publisherForm>
       </div>
     </transition>
   </div>
