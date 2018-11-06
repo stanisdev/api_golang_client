@@ -75,6 +75,7 @@ export default {
     this.fetchPublishers()
   },
   methods: {
+    handleEdit (index, row) {},
     handleSizeChange (val) {
       this.perPage = val
       this.currentPage = 1

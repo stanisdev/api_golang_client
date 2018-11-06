@@ -4,6 +4,7 @@ import Notifications from '@/components/Notifications'
 import Login from '@/components/Login'
 import CreateNotification from '@/components/CreateNotification'
 import NotificationView from '@/components/NotificationView'
+import PublisherView from '@/components/PublisherView'
 import UserProfile from '@/components/UserProfile'
 import Publishers from '@/components/Publishers'
 import CreatePublisher from '@/components/CreatePublisher'
@@ -41,6 +42,14 @@ const router = new Router({
       path: '/notifications/edit/:id',
       name: 'NotificationView',
       component: NotificationView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/publishers/edit/:id',
+      name: 'PublisherView',
+      component: PublisherView,
       meta: {
         requiresAuth: true
       }
