@@ -1,5 +1,10 @@
 <template>
-  <el-form :rules="rules" ref="form" :model="notification" label-width="120px">
+  <div>
+    <loader v-bind:is_showing="loading"></loader>
+
+    <transition name="fade">
+    <div v-if="done">
+    <el-form :rules="rules" ref="form" :model="notification" label-width="120px">
 
     <el-form-item label="Header" prop="header">
       <el-input class="inpCustom" v-model="notification.header"></el-input>
@@ -13,8 +18,15 @@
       <el-input class="inpCustom" v-model="notification.link"></el-input>
     </el-form-item>
 
-    <el-form-item label="Company" prop="company">
-      <el-input class="inpCustom" v-model="notification.company"></el-input>
+    <el-form-item label="Publisher" prop="company">
+      <el-select v-bind:style="{ width: '70%' }" v-model="selectedPublisher" filterable placeholder="Select">
+        <el-option
+          v-for="item in allPublishers"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
     </el-form-item>
 
     <el-form-item label="Expired" prop="expired">
@@ -52,17 +64,24 @@
       <el-button @click="onCancel">Cancel</el-button>
     </el-form-item>
 
-  </el-form>
+    </el-form>
+    </div>
+    </transition>
+  </div>
 </template>
 
 <script>
 import ApiService from '@/common/api.service'
 import Env from '@/env.js'
 import UrlValidator from 'url-regex'
+import Loader from '@/components/Loader.vue'
 
 export default {
   name: 'NotificationForm',
   props: ['notification', 'mode'],
+  components: {
+    Loader
+  },
   data () {
     const validateHeader = (role, value, callback) => {
       if (!value) {
@@ -79,8 +98,8 @@ export default {
       }
     }
     const validateCompany = (role, value, callback) => {
-      if (!value) {
-        callback(new Error('Please input the company name'))
+      if (isNaN(parseInt(this.selectedPublisher))) {
+        callback(new Error('Please select the publisher'))
       } else {
         callback()
       }
@@ -136,6 +155,10 @@ export default {
       }
     }
     return {
+      done: false,
+      loading: true,
+      allPublishers: [],
+      selectedPublisher: '',
       imgInvalid: false,
       selectedImage: null,
       rules: {
@@ -176,19 +199,52 @@ export default {
     }
   },
   mounted () {
+    setTimeout(() => {
+      document.querySelectorAll('[class*=el-select-dropdown]').forEach((elem) => {
+        elem.style['font-family'] = 'Avenir, Helvetica, Arial, sans-serif'
+      })
+    }, 70)
     if (this.mode === 'edit') {
-      const img = this.notification.image
-      document.getElementById('imagePreview').innerHTML = `<img src="${Env.UPLOADS_URL}/${img}">`
-      this.selectedImage = img
+      // const img = this.notification.image // ---> @TODO: Uncomment
+      // document.getElementById('imagePreview').innerHTML = `<img src="${Env.UPLOADS_URL}/${img}">`
+      // this.selectedImage = img
     }
-    const ta = document.getElementsByTagName('textarea')[0]
-    if (ta instanceof Object) {
-      ta.style.height = '150px'
-      ta.style['font-size'] = '14px'
-      ta.style['font-family'] = "'Avenir', Helvetica, Arial, sans-serif"
-    }
+    setTimeout(() => {
+      const ta = document.getElementsByTagName('textarea')[0]
+      if (ta instanceof Object) {
+        ta.style.height = '150px'
+        ta.style['font-size'] = '14px'
+        ta.style['font-family'] = "'Avenir', Helvetica, Arial, sans-serif"
+      }
+    }, 90)
+  },
+  created () {
+    this.fetchAllPublishers()
   },
   methods: {
+    fetchAllPublishers () {
+      ApiService
+        .setAuth().get
+        .call(this, '/publisher/plain_list')
+        .then((data) => {
+          this.done = true
+          this.publisher = data.payload
+          this.allPublishers = data.payload.map((publisher) => {
+            return {
+              value: publisher.id,
+              label: publisher.name
+            }
+          })
+          const activePublisher = this.publisher.find((pub) => pub.name === this.notification.company)
+          if (activePublisher instanceof Object && !isNaN(parseInt(activePublisher.id))) {
+            this.selectedPublisher = activePublisher.id
+          }
+        })
+        .catch(Symbol)
+        .finally(() => {
+          this.loading = false
+        })
+    },
     datepickerFocused () {
       setTimeout(() => {
         document.querySelectorAll('[class*=el-date-picker]').forEach((elem) => {
@@ -229,6 +285,7 @@ export default {
       }
     },
     onSave () {
+      // console.log(this.selectedPublisher)
       let url = '/notification'
       const {mode} = this
       if (mode === 'create') {
@@ -271,7 +328,7 @@ export default {
               expired: exp,
               button: ntf.button,
               link: ntf.link,
-              company: ntf.company
+              company: this.selectedPublisher
             })
             .then((data) => {
               if (data instanceof Object && data.ok) {
