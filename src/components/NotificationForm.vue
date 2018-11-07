@@ -205,9 +205,9 @@ export default {
       })
     }, 70)
     if (this.mode === 'edit') {
-      // const img = this.notification.image // ---> @TODO: Uncomment
-      // document.getElementById('imagePreview').innerHTML = `<img src="${Env.UPLOADS_URL}/${img}">`
-      // this.selectedImage = img
+      const img = this.notification.image
+      document.getElementById('imagePreview').innerHTML = `<img src="${Env.UPLOADS_URL}/${img}">`
+      this.selectedImage = img
     }
     setTimeout(() => {
       const ta = document.getElementsByTagName('textarea')[0]
@@ -328,7 +328,7 @@ export default {
               expired: exp,
               button: ntf.button,
               link: ntf.link,
-              company: this.selectedPublisher
+              publisher_id: this.selectedPublisher + ''
             })
             .then((data) => {
               if (data instanceof Object && data.ok) {

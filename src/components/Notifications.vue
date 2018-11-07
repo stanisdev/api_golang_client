@@ -187,8 +187,10 @@ export default {
       const tasks = []
       const offset = (this.currentPage - 1) * this.perPage
       let ntfUrl = '/notification/list?limit=' + this.perPage + '&offset=' + offset
+      let ntfCountUrl = '/notification/count'
       if (!isNaN(publisherId)) {
         ntfUrl += '&pub=' + publisherId
+        ntfCountUrl += '?pub=' + publisherId
       }
       this.done = false
 
@@ -197,7 +199,7 @@ export default {
         .call(this, ntfUrl))
       tasks.push(ApiService
         .setAuth().get
-        .call(this, '/notification/count'))
+        .call(this, ntfCountUrl))
       Promise.all(tasks)
         .then(([ntfs, count]) => {
           this.done = true
