@@ -183,9 +183,13 @@ export default {
       }).then(Symbol).catch(Symbol)
     },
     fetchNotifications () {
+      const publisherId = parseInt(this.$route.query.pub)
       const tasks = []
       const offset = (this.currentPage - 1) * this.perPage
-      const ntfUrl = '/notification/list?limit=' + this.perPage + '&offset=' + offset
+      let ntfUrl = '/notification/list?limit=' + this.perPage + '&offset=' + offset
+      if (!isNaN(publisherId)) {
+        ntfUrl += '&pub=' + publisherId
+      }
       this.done = false
 
       tasks.push(ApiService
