@@ -225,8 +225,10 @@ export default {
     }, 70)
     if (this.mode === 'edit') {
       const img = this.notification.image
-      document.getElementById('imagePreview').innerHTML = `<img src="${Env.UPLOADS_URL}/${img}">`
       this.selectedImage = img
+      setTimeout(() => {
+        document.getElementById('imagePreview').innerHTML = `<img src="${Env.UPLOADS_URL}/${img}">`
+      }, 200)
     }
     setTimeout(() => {
       const ta = document.getElementsByTagName('textarea')[0]
@@ -320,7 +322,6 @@ export default {
 
         let messageError = true
         const {message} = this.notification
-        console.log(message)
         if (typeof message === 'string' && message.length > 0) {
           messageError = false
         }
