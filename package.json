@@ -16,6 +16,7 @@
     "url-regex": "^4.1.1",
     "vue": "^2.5.2",
     "vue-axios": "^2.1.3",
+    "vue-froala-wysiwyg": "^2.9.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

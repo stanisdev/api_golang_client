@@ -39,9 +39,26 @@
       <el-input class="inpCustom" v-model="notification.priority"></el-input>
     </el-form-item>
 
-    <el-form-item label="Message" prop="message">
-      <el-input class="inpCustom" type="textarea" v-model="notification.message"></el-input>
-    </el-form-item>
+    <table cellspacing="0" cellpadding="0" style="border: none; margin-left: 51px; margin-bottom: 32px;">
+      <tr>
+        <td valign="top">
+          <span style="color: #606266; font-size: 14px; margin-top: 10px; display: block;">Message</span>
+        </td>
+        <td>
+          <div style="width: 100%; margin-left: 12px;">
+            <froala v-bind:style="{ height: '500px' }" :tag="'textarea'" :config="wysiwygConfig" v-model="notification.message"></froala>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td>
+          <div v-if="messageInvalid" style="margin: 6px 0 0 68px;" class="imgError">Please input the message</div>
+        </td>
+      </tr>
+    </table>
 
     <el-form-item label="Image">
 
@@ -75,12 +92,14 @@ import ApiService from '@/common/api.service'
 import Env from '@/env.js'
 import UrlValidator from 'url-regex'
 import Loader from '@/components/Loader.vue'
+import VueFroala from 'vue-froala-wysiwyg'
 
 export default {
   name: 'NotificationForm',
   props: ['notification', 'mode'],
   components: {
-    Loader
+    Loader,
+    VueFroala
   },
   data () {
     const validateHeader = (role, value, callback) => {
@@ -109,13 +128,6 @@ export default {
         callback(new Error('Please input the priority'))
       } else if (!/^\d+$/ig.test(value)) {
         callback(new Error('Wrong priority value'))
-      } else {
-        callback()
-      }
-    }
-    const validateMessage = (role, value, callback) => {
-      if (!value) {
-        callback(new Error('Please input the message'))
       } else {
         callback()
       }
@@ -155,6 +167,16 @@ export default {
       }
     }
     return {
+      wysiwygConfig: {
+        width: 672,
+        height: 240,
+        quickInsertTags: [],
+        toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', '-', 'insertLink', 'embedly', 'insertTable', '|', 'emoticons', 'fontAwesome', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
+        events: {
+          'froalaEditor.initialized': function () {}
+        }
+      },
+      messageInvalid: false,
       done: false,
       loading: true,
       allPublishers: [],
@@ -176,9 +198,6 @@ export default {
         ],
         priority: [
           { validator: validatePriority, trigger: 'blur' }
-        ],
-        message: [
-          { validator: validateMessage, trigger: 'blur' }
         ],
         expired: [
           { validator: validateExpired, trigger: 'blur' }
@@ -285,7 +304,6 @@ export default {
       }
     },
     onSave () {
-      // console.log(this.selectedPublisher)
       let url = '/notification'
       const {mode} = this
       if (mode === 'create') {
@@ -294,13 +312,19 @@ export default {
         url += '/edit/' + this.notification.id
       }
       this.$refs['form'].validate((valid) => {
-        let imgError
+        let imgError = true
         if (typeof this.selectedImage === 'string' && this.selectedImage.length > 0) {
           imgError = false
-        } else {
-          imgError = true
         }
         this.imgInvalid = imgError
+
+        let messageError = true
+        const {message} = this.notification
+        console.log(message)
+        if (typeof message === 'string' && message.length > 0) {
+          messageError = false
+        }
+        this.messageInvalid = messageError
 
         let exp = this.notification.expired
         if (exp instanceof Date) {
@@ -316,7 +340,7 @@ export default {
             return e
           }).join('/')
         }
-        if (valid && !this.imgInvalid) {
+        if (valid && !this.imgInvalid && !messageError) {
           const ntf = this.notification
           ApiService
             .setAuth().post
