@@ -94,6 +94,7 @@
 import MenuNavigation from '@/components/MenuNavigation.vue'
 import Loader from '@/components/Loader.vue'
 import ApiService from '@/common/api.service'
+const striptags = require('striptags')
 
 export default {
   name: 'Notifications',
@@ -203,7 +204,16 @@ export default {
       Promise.all(tasks)
         .then(([ntfs, count]) => {
           this.done = true
-          this.notifications = ntfs.payload || []
+          let {payload} = ntfs
+          if (Array.isArray(payload)) {
+            payload = payload.map((element) => {
+              element.message = striptags(element.message)
+              return element
+            })
+          } else {
+            payload = []
+          }
+          this.notifications = payload
           this.totalCount = +count.payload || 0
         })
         .catch(Symbol)
